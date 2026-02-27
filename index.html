@@ -897,6 +897,15 @@
                 grid-template-rows: 30vh 1fr;
             }
         }
+            /* ... existing styles ... */
+
+    /* Hide side navigation on mobile phones */
+    @media (max-width: 576px) {
+        .wonder-nav {
+            display: none !important;
+        }
+    }
+
     </style>
 </head>
 
@@ -1196,8 +1205,6 @@
                 <div class="overlay"></div>
                 <div class="carousel slide carousel-fade" data-bs-ride="carousel">
                     <div class="carousel-inner">
-                        <div class="carousel-item active"><img src="Taj Mehal/46350046785_824e43ba34_o.jpg"
-                                alt="Taj Mahal"></div>
                         <div class="carousel-item"><img src="Taj Mehal/Taj_Mahal-from-a-different-perspective.jpg"
                                 alt="Taj Mahal"></div>
                         <div class="carousel-item"><img
