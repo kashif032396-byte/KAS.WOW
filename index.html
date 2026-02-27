@@ -1,14 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WOW · Wonders of the World</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Inter:wght@300;400;500&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23c6a84a' class='bi bi-globe-americas' viewBox='0 0 16 16'%3E%3Cpath d='M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0M2.04 4.326c.325 1.329 2.532 2.54 3.717 3.19.48.263.793.434.743.484q-.121.12-.242.234c-.416.396-.787.749-.758 1.266.035.634.618.824 1.214 1.017.577.188 1.168.38 1.286.983.082.417-.075.988-.22 1.52-.215.782-.406 1.48.22 1.48 1.5-.5 3.798-3.186 4-5 .138-1.243-2-2-3.5-2.5-.478-.16-.755.081-.99.284-.172.15-.322.279-.51.216-.445-.148-2.5-2-1.5-2.5.78-.39.952-.171 1.227.182.078.099.163.208.273.318.609.304.662-.132.723-.633.039-.322.081-.671.277-.867.434-.434 1.265-.791 2.028-1.12.712-.306 1.365-.587 1.579-.88A7 7 0 1 1 2.04 4.327Z'/%3E%3C/svg%3E">
+    <link rel="icon"
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23c6a84a' class='bi bi-globe-americas' viewBox='0 0 16 16'%3E%3Cpath d='M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0M2.04 4.326c.325 1.329 2.532 2.54 3.717 3.19.48.263.793.434.743.484q-.121.12-.242.234c-.416.396-.787.749-.758 1.266.035.634.618.824 1.214 1.017.577.188 1.168.38 1.286.983.082.417-.075.988-.22 1.52-.215.782-.406 1.48.22 1.48 1.5-.5 3.798-3.186 4-5 .138-1.243-2-2-3.5-2.5-.478-.16-.755.081-.99.284-.172.15-.322.279-.51.216-.445-.148-2.5-2-1.5-2.5.78-.39.952-.171 1.227.182.078.099.163.208.273.318.609.304.662-.132.723-.633.039-.322.081-.671.277-.867.434-.434 1.265-.791 2.028-1.12.712-.306 1.365-.587 1.579-.88A7 7 0 1 1 2.04 4.327Z'/%3E%3C/svg%3E">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
@@ -56,6 +59,7 @@
         .navbar-brand .short-brand {
             display: none;
         }
+
         .navbar-brand .full-brand {
             display: inline;
         }
@@ -256,6 +260,7 @@
             0% {
                 transform: translate(100%, -50%);
             }
+
             100% {
                 transform: translate(0, -50%);
             }
@@ -544,15 +549,18 @@
         .advertise-card .collapsed-icon {
             font-size: 1.8rem;
             color: var(--accent);
-            transition: opacity 0.2s;
+            transition: opacity 0.5s;
             position: absolute;
         }
 
         .advertise-card .full-content {
             display: flex;
             align-items: center;
-            gap: 20px;
-            padding: 0 25px;
+            gap: 15px;
+            /* reduced from 100px */
+            flex-wrap: wrap;
+            /* allows items to wrap on small screens */
+            padding: 0 5px;
             opacity: 0;
             transition: opacity 0.2s;
             pointer-events: none;
@@ -563,7 +571,8 @@
             text-decoration: none;
             font-weight: 600;
             margin: 0 8px;
-            pointer-events: auto; /* make links clickable when visible */
+            pointer-events: auto;
+            /* make links clickable when visible */
         }
 
         .advertise-card .full-content a:hover {
@@ -636,16 +645,19 @@
             color: white !important;
             opacity: 1;
         }
+
         input::-moz-placeholder,
         textarea::-moz-placeholder {
             color: white !important;
             opacity: 1;
         }
+
         input:-ms-input-placeholder,
         textarea:-ms-input-placeholder {
             color: white !important;
             opacity: 1;
         }
+
         input:-moz-placeholder,
         textarea:-moz-placeholder {
             color: white !important;
@@ -664,25 +676,30 @@
             :root {
                 --navbar-height: 60px;
             }
+
             .navbar {
                 height: var(--navbar-height);
                 min-height: var(--navbar-height);
                 padding: 0 1rem;
             }
+
             .navbar .container-fluid {
                 height: 100%;
                 display: flex;
                 align-items: center;
             }
+
             .navbar-brand {
                 font-size: 1.3rem;
                 line-height: 1.2;
             }
+
             .navbar-toggler {
                 padding: 0.25rem 0.5rem;
                 margin: 0;
                 line-height: 1;
             }
+
             /* Mobile dropdown menu – flush under navbar */
             .navbar-collapse {
                 position: absolute;
@@ -699,10 +716,12 @@
                 overflow-y: auto;
                 margin: 0;
             }
+
             .navbar-nav {
                 margin: 0;
                 padding: 0;
             }
+
             .navbar-nav .nav-link {
                 padding: 14px !important;
                 text-align: center;
@@ -711,13 +730,16 @@
                 border-radius: 0;
                 font-size: 1.1rem;
             }
+
             .navbar-nav .nav-link:last-child {
                 border-bottom: none;
             }
+
             /* Give section headings more breathing room on mobile */
             .page-section {
                 padding-top: calc(var(--navbar-height) + 40px);
             }
+
             #home-section {
                 padding-top: 0;
             }
@@ -725,17 +747,21 @@
             .wonder-title {
                 font-size: 2.5rem;
             }
+
             .intro-content h1 {
                 font-size: 3rem;
             }
+
             .wonder-content {
                 left: 5%;
                 max-width: 85%;
             }
+
             .wonder-history-preview {
                 padding: 15px;
                 font-size: 0.9rem;
             }
+
             /* side nav moves to bottom row on small screens */
             .wonder-nav {
                 right: 10px;
@@ -746,26 +772,32 @@
                 animation: slideFromRightMobile 0.9s cubic-bezier(0.2, 0.9, 0.3, 1) forwards;
                 transform-origin: right center;
             }
+
             @keyframes slideFromRightMobile {
                 0% {
                     transform: translate(100%, 0);
                 }
+
                 100% {
                     transform: translate(0, 0);
                 }
             }
+
             .nav-icon {
                 width: 40px;
                 height: 40px;
             }
+
             .search-box {
                 top: calc(var(--navbar-height) + 5px);
             }
+
             #search {
                 width: 160px;
                 padding: 8px 16px;
                 font-size: 0.9rem;
             }
+
             #search:focus {
                 width: 250px;
             }
@@ -776,10 +808,12 @@
                 grid-template-rows: 40vh 1fr;
                 height: 90vh;
             }
+
             .detail-img {
                 height: 100%;
                 overflow: hidden;
             }
+
             .detail-img img {
                 width: 100%;
                 height: 100%;
@@ -787,15 +821,18 @@
                 border-right: none;
                 border-bottom: 1px solid var(--accent);
             }
+
             .detail-text {
                 padding: 20px;
                 overflow-y: auto;
                 height: 100%;
             }
+
             .detail-text h2 {
                 font-size: 2rem;
                 margin-top: 0;
             }
+
             .detail-text p {
                 font-size: 1rem;
                 max-height: none;
@@ -805,12 +842,16 @@
                 left: 10px;
                 bottom: 10px;
             }
+
             .advertise-card.expanded {
-                width: 340px; /* slightly smaller on mobile */
+                width: 340px;
+                /* slightly smaller on mobile */
             }
+
             .gallery-grid {
                 grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
             }
+
             .gallery-item {
                 height: 120px;
             }
@@ -819,16 +860,21 @@
         /* ===== EXTRA SMALL (iPhone SE and similar) ===== */
         @media (max-width: 375px) {
             .navbar-brand {
-                font-size: 1.2rem;  /* slightly smaller */
+                font-size: 1.2rem;
+                /* slightly smaller */
             }
+
             .navbar-brand .full-brand {
                 display: none;
             }
+
             .navbar-brand .short-brand {
                 display: inline;
             }
+
             .advertise-card.expanded {
-                width: 300px; /* even smaller on iPhone SE */
+                width: 300px;
+                /* even smaller on iPhone SE */
             }
         }
 
@@ -836,20 +882,24 @@
             .wonder-title {
                 font-size: 2rem;
             }
+
             .wonder-content {
                 left: 3%;
                 max-width: 92%;
             }
+
             .nav-icon {
                 width: 35px;
                 height: 35px;
             }
+
             .detail-card {
                 grid-template-rows: 30vh 1fr;
             }
         }
     </style>
 </head>
+
 <body>
 
     <!-- Navbar -->
@@ -860,7 +910,8 @@
                 <span class="full-brand">WONDER OF WORLD</span>
                 <span class="short-brand">WOW</span>
             </a>
-            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon" style="filter: invert(1);"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
@@ -882,7 +933,9 @@
     <div class="advertise-card" id="advertiseCard">
         <i class="bi bi-bus-front collapsed-icon"></i>
         <div class="full-content">
-            <span><i class="bi bi-bus-front me-1"></i> <a href="#" data-bs-toggle="modal" data-bs-target="#bookingModal" onclick="event.preventDefault()">Bus to Petra</a> | <a href="#" data-bs-toggle="modal" data-bs-target="#bookingModal" onclick="event.preventDefault()">Flight to Machu Picchu</a></span>
+            <span><i class="bi bi-bus-front me-1"></i> <a href="#" data-bs-toggle="modal" data-bs-target="#bookingModal"
+                    onclick="event.preventDefault()">Bus to Petra</a> | <a href="#" data-bs-toggle="modal"
+                    data-bs-target="#bookingModal" onclick="event.preventDefault()">Flight to Machu Picchu</a></span>
             <span><i class="bi bi-tags"></i> 20% off with code WOW7</span>
         </div>
     </div>
@@ -1552,4 +1605,5 @@
         });
     </script>
 </body>
+
 </html>
