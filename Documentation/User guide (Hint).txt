@@ -1,0 +1,126 @@
+WOW · Wonders of the World – Complete Documentation
+This document contains two separate guides:
+
+User Guide – for visitors who want to explore the website.
+
+Developer Guide – for programmers who want to understand, modify, or extend the code.
+
+Both guides are based on the provided index.html file.
+
+Part 1: User Guide
+Welcome to Wonders of the World (WOW) – an immersive website that lets you discover the New Seven Wonders through stunning imagery, detailed history, and interactive features.
+
+1. Getting Started
+Open the website in any modern browser (Chrome, Firefox, Safari, Edge).
+
+An internet connection is required to load images and external resources (Bootstrap, fonts, icons).
+
+The page starts at the Home section with a dramatic full‑screen introduction.
+
+2. Navigating the Site
+The navigation bar at the top (or the hamburger menu on mobile) contains links to all main sections:
+
+Home – returns to the scrollable wonder showcase.
+
+Seven Wonders – scrolls directly to the first wonder (Great Wall).
+
+Gallery – grid view of all wonder images.
+
+Feedback – leave a rating and comment.
+
+Contact – see address, phone, and use geolocation.
+
+About – brief information about the project.
+
+Site Map – quick links to sections.
+
+Queries – ask a question (placeholder form).
+
+Click any link to switch sections. On mobile, the menu automatically closes after selection.
+
+3. Home Section – The Wonders
+The home page is a vertical scroll with snap‑scrolling – each wonder fills the entire screen.
+
+3.1 How to Browse
+Scroll down/up to move between wonders.
+
+Right side (desktop) or bottom row (mobile) shows circular thumbnails – click any to jump directly to that wonder.
+
+The active wonder’s thumbnail is highlighted with a gold border and glow.
+
+3.2 Each Wonder Slide
+Every wonder slide contains:
+
+A background carousel of multiple images that slowly zoom in.
+
+A gold‑accented text panel with the wonder’s name and a short preview.
+
+A “Click to expand details” hint – click anywhere on the text panel (except the PDF button) to open a detailed overlay.
+
+3.3 Detailed Overlay
+When you click a wonder’s text panel, a full‑screen overlay appears with:
+
+A carousel of all images for that wonder (left side on desktop, top on mobile).
+
+The complete historical text with dates and facts (right side).
+
+A close button (×) at the top right – click it or the background to return.
+
+3.4 PDF Download
+Each wonder has a “Download PDF” button. Click it to generate a PDF file containing the wonder’s name and full historical description. The file is saved automatically.
+
+4. Search Box
+The search input appears only on the Home and Gallery sections (centered below the navbar).
+
+On Home: type a wonder name (e.g., “Petra”) – the page scrolls to that wonder. If no match is found, the search box briefly turns red.
+
+On Gallery: type a wonder name to filter the gallery – only matching wonder groups remain visible. If nothing matches, a “No matching wonders found” message appears.
+
+5. Gallery Section
+The gallery displays all images from every wonder, grouped by wonder name. Each thumbnail is clickable – it opens a full‑size version in a lightbox modal (click the × or outside to close).
+
+6. Feedback Section
+Leave your rating and comments:
+
+Click the stars to set a rating (1–5).
+
+Fill in your name, email, and message.
+
+Submit – a confirmation alert appears, and the data is saved in your browser’s local storage (demo purpose).
+
+7. Contact & Geolocation
+The contact card provides:
+
+Email, phone, and address.
+
+“Find my location” button – if you allow location access, your current latitude and longitude are displayed below.
+
+The adjacent “Quick message” form is a placeholder.
+
+8. Booking and Advertise Card
+At the bottom‑left corner, you’ll see a small gold‑bordered circle with a bus icon.
+
+Click it – it expands into a horizontal bar with links: “Bus to Petra” and “Flight to Machu Picchu”, plus a discount code.
+
+Click any link – the booking modal opens. Fill in the destination, travel mode, name, email, and date, then click “Book Now” for a demo confirmation.
+
+Click the card again (not on a link) to collapse it back to a circle.
+
+9. Other Sections
+About – short mission statement.
+
+Site Map – textual links to all sections (same as navbar).
+
+Queries – a simple form to ask a question (placeholder).
+
+10. Mobile Experience
+The site is fully responsive:
+
+On tablets and phones, the side navigation moves to the bottom.
+
+The detail overlay stacks images above text.
+
+The navbar collapses into a hamburger menu.
+
+Very small screens (e.g., iPhone SE) show the brand as “WOW” instead of the full name.
+

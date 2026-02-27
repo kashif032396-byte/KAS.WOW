@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deepseek - Wonders of the World</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --accent: #c6a84a;
+            --dark: #0a0a0a;
+            --ease: cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            background: var(--dark);
+            color: #fff;
+            overflow: hidden;
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* SCROLL SYSTEM */
+        .scroll-container {
+            height: 100vh;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+            scrollbar-width: none;
+            scroll-behavior: smooth;
+        }
+
+        .scroll-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .wonder-section {
+            height: 100vh;
+            width: 100%;
+            scroll-snap-align: start;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* BACKGROUND ZOOM (optional – keeps the smooth zoom effect) */
+        .carousel, .carousel-inner, .carousel-item {
+            height: 100vh;
+        }
+
+        .carousel-item img {
+            height: 100vh;
+            width: 100%;
+            object-fit: cover;
+            transform: scale(1);
+            transition: transform 10s linear;
+        }
+
+        .carousel-item.active img {
+            transform: scale(1.15);
+        }
+
+        .overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to right, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.2) 60%, rgba(0, 0, 0, 0.4) 100%);
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        /* INTERACTIVE CARD SYSTEM (for wonder sections) */
+        .wonder-content {
+            position: absolute;
+            top: 50%;
+            left: 8%;
+            transform: translateY(-40%);
+            z-index: 10;
+            max-width: 450px;
+            opacity: 0;
+            transition: all 0.8s var(--ease);
+            cursor: pointer;
+        }
+
+        .wonder-section.active .wonder-content {
+            opacity: 1;
+            transform: translateY(-50%) translateX(0);
+        }
+
+        .wonder-title {
+            font-family: 'Cinzel', serif;
+            font-size: 3.5rem;
+            color: var(--accent);
+            margin-bottom: 10px;
+            text-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .wonder-history-preview {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 25px;
+            border-left: 3px solid var(--accent);
+            backdrop-filter: blur(15px);
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #ccc;
+            transition: 0.3s;
+            position: relative;
+        }
+
+        .wonder-content:hover .wonder-history-preview {
+            background: rgba(198, 168, 74, 0.1);
+            border-left-width: 8px;
+            color: #fff;
+        }
+
+        .click-hint {
+            display: block;
+            margin-top: 10px;
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            color: var(--accent);
+            text-transform: uppercase;
+            opacity: 0.6;
+        }
+
+        /* INTRO SLIDE */
+        .intro-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 20;
+            text-align: center;
+            width: 100%;
+            pointer-events: none;
+        }
+
+        .intro-content h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 6rem;
+            color: #fff;
+            text-shadow: 0 0 30px var(--accent), 0 0 60px rgba(198,168,74,0.5);
+            letter-spacing: 0.1em;
+            animation: fadeIn 2s ease-out;
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: scale(0.9); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        /* FULL DESCRIPTION MODAL */
+        .detail-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: 0.5s var(--ease);
+            backdrop-filter: blur(10px);
+        }
+
+        .detail-card {
+            width: 80%;
+            height: 80%;
+            background: #111;
+            border: 1px solid rgba(198, 168, 74, 0.3);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            overflow: hidden;
+            transform: scale(0.9) translateY(20px);
+            transition: 0.5s var(--ease);
+            position: relative;
+        }
+
+        .detail-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .detail-overlay.active .detail-card {
+            transform: scale(1) translateY(0);
+        }
+
+        .detail-img {
+            background-size: cover;
+            background-position: center;
+            border-right: 1px solid var(--accent);
+        }
+        .detail-img img {
+            height: 100%;
+            width: 100%;
+            object-fit: cover;
+        }
+
+        .detail-text {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            padding: 60px;
+            background: linear-gradient(135deg, #111 0%, #050505 100%);
+            min-height: 0;
+        }
+
+        .detail-text h2 {
+            font-family: 'Cinzel', serif;
+            color: var(--accent);
+            font-size: 3rem;
+            margin-bottom: 20px;
+            flex-shrink: 0;
+        }
+
+        .detail-text p {
+            flex: 1;
+            overflow-y: auto;
+            font-size: 1.15rem;
+            line-height: 1.9;
+            color: #bbb;
+            margin: 0;
+            padding-right: 10px;
+            min-height: 0;
+        }
+
+        .detail-text p::-webkit-scrollbar {
+            width: 6px;
+        }
+        .detail-text p::-webkit-scrollbar-thumb {
+            background: var(--accent);
+            border-radius: 10px;
+        }
+
+        .close-detail {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            font-size: 2rem;
+            color: var(--accent);
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        /* SIDE NAV */
+        .wonder-nav {
+            position: fixed;
+            right: 30px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .nav-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            background-size: cover;
+            background-position: center;
+            cursor: pointer;
+            transition: 0.6s var(--ease);
+            filter: grayscale(100%) brightness(0.7);
+        }
+
+        .nav-icon.active {
+            border-color: var(--accent);
+            transform: scale(1.3);
+            filter: grayscale(0%) brightness(1);
+            box-shadow: 0 0 25px rgba(198, 168, 74, 0.4);
+        }
+
+        .search-box {
+            position: fixed;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+        }
+
+        #search {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(198, 168, 74, 0.3);
+            color: white;
+            border-radius: 30px;
+            padding: 10px 30px;
+            width: 200px;
+            backdrop-filter: blur(10px);
+            transition: 0.5s var(--ease);
+            text-align: center;
+        }
+
+        #search:focus {
+            width: 350px;
+            outline: none;
+            border-color: var(--accent);
+        }
+        /* Search error flash */
+        .search-error {
+            border-color: red !important;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Detail Modal -->
+<div class="detail-overlay" id="detailOverlay">
+    <div class="detail-card">
+        <span class="close-detail">&times;</span>
+        <div id="detailCarousel" class="carousel slide detail-img" data-bs-ride="carousel">
+            <div class="carousel-inner" id="detailCarouselInner"></div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#detailCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon"></span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#detailCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon"></span>
+            </button>
+        </div>
+        <div class="detail-text">
+            <h2 id="detailTitle">Title</h2>
+            <p id="detailFullText">Description goes here...</p>
+        </div>
+    </div>
+</div>
+
+<div class="search-box">
+    <input type="text" id="search" placeholder="Explore legacy...">
+</div>
+
+<div class="wonder-nav" id="sidebarNav"></div>
+
+<div class="scroll-container" id="mainScroll">
+
+    <!-- INTRO SLIDE (unchanged) -->
+    <section class="wonder-section" id="intro" data-name="Introduction">
+        <div class="overlay"></div>
+        <div class="carousel slide carousel-fade" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1600" alt="Wonders of the World">
+                </div>
+            </div>
+        </div>
+        <div class="intro-content">
+            <h1>WONDER OF WORLD</h1>
+        </div>
+    </section>
+
+    <!-- 1. GREAT WALL -->
+    <section class="wonder-section" id="wall" data-name="Great Wall of China">
+        <div class="overlay"></div>
+        <!-- Bootstrap carousel with captions and indicators -->
+        <div id="carousel-wall" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-indicators">
+                <button type="button" data-bs-target="#carousel-wall" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                <button type="button" data-bs-target="#carousel-wall" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                <button type="button" data-bs-target="#carousel-wall" data-bs-slide-to="2" aria-label="Slide 3"></button>
+                <button type="button" data-bs-target="#carousel-wall" data-bs-slide-to="3" aria-label="Slide 4"></button>
+                <button type="button" data-bs-target="#carousel-wall" data-bs-slide-to="4" aria-label="Slide 5"></button>
+            </div>
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <img src="/China wall/getty-images-80OWrQGTtG8-unsplash-e1734609545282.jpg" class="d-block w-100" alt="Great Wall">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>The Great Wall of China</h5>
+                        <p>Stretching across mountains, a testament to ancient engineering.</p>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img src="/China wall/20.jpg" class="d-block w-100" alt="Great Wall">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>The Great Wall of China</h5>
+                        <p>Watchtowers and winding paths along the rugged terrain.</p>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img src="/China wall/61310.jpg" class="d-block w-100" alt="Great Wall">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>The Great Wall of China</h5>
+                        <p>Built over centuries to protect and unify.</p>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img src="/China wall/great-wall-china-tourists-GWOC0417-10bddbf0783644c386178f62117b2132.jpg" class="d-block w-100" alt="Great Wall">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>The Great Wall of China</h5>
+                        <p>One of the most iconic landmarks in the world.</p>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img src="/China wall/site_0438_0035-1200-630-20251217144955.jpg" class="d-block w-100" alt="Great Wall">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>The Great Wall of China</h5>
+                        <p>A symbol of resilience and history.</p>
+                    </div>
+                </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carousel-wall" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carousel-wall" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+        <div class="wonder-content" data-full="Stretching more than 13,000 miles (21,000 kilometers) across northern China, the Great Wall is not a single wall but a vast network of fortifications built over many dynasties beginning in the 7th century BCE. The most famous sections were constructed during the Ming Dynasty (1368–1644), using bricks, tamped earth, stone, and wood. It was designed to defend Chinese states against invasions from nomadic tribes such as the Mongols and to regulate trade and immigration along the Silk Road. Watchtowers, signal towers, and garrison stations were integrated into its design for military communication. Millions of soldiers, peasants, and prisoners labored to build it under harsh conditions, and many are believed to have died during construction. Today, the Great Wall stands as a UNESCO World Heritage Site and a powerful symbol of China's resilience, engineering mastery, and historical unity.">
+            <h1 class="wonder-title">The Great Wall of China</h1>
+            <div class="wonder-history-preview">
+                The world's longest man-made structure, a stone dragon winding across the mountains of China.
+                <span class="click-hint">Click to expand details</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2. PETRA -->
+    <section class="wonder-section" id="petra" data-name="Petra">
+        <div class="overlay"></div>
+        <div id="carousel-petra" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-indicators">
+                <button type="button" data-bs-target="#carousel-petra" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                <button type="button" data-bs-target="#carousel-petra" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                <button type="button" data-bs-target="#carousel-petra" data-bs-slide-to="2" aria-label="Slide 3"></button>
+                <button type="button" data-bs-target="#carousel-petra" data-bs-slide-to="3" aria-label="Slide 4"></button>
+            </div>
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <img src="/Petra/7991588-the-monastery-petra.jpg" class="d-block w-100" alt="Petra Treasury">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>Petra</h5>
+                        <p>The iconic Treasury carved into rose-red rock.</p>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img src="/Petra/ad-deir.jpg" class="d-block w-100" alt="Petra">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>Petra</h5>
+                        <p>Ad-Deir, the Monastery, one of Petra's largest monuments.</p>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img src="/Petra/Lower_city,_Petra.jpg" class="d-block w-100" alt="Petra">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>Petra</h5>
+                        <p>The ancient city hidden for centuries.</p>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img src="/Petra/shutterstock_1030695895-1024x683.jpg" class="d-block w-100" alt="Petra">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>Petra</h5>
+                        <p>A masterpiece of Nabataean architecture.</p>
+                    </div>
+                </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carousel-petra" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carousel-petra" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+        <div class="wonder-content" data-full="Petra was established as early as the 5th century BCE and became the capital of the Nabataean Kingdom. Strategically positioned between Arabia, Egypt, and the Mediterranean, it thrived as a major trade hub controlling the incense and spice routes. The Nabataeans were masters of hydraulic engineering, creating complex water channels, reservoirs, and dams that allowed the city to flourish in the desert. Petra is renowned for its elaborate rock-cut architecture, including Al-Khazneh (The Treasury), Ad-Deir (The Monastery), and the Royal Tombs — all carved directly into vibrant red sandstone cliffs. After Roman annexation in 106 CE and a series of earthquakes, the city gradually declined and was eventually abandoned. Hidden from the Western world for centuries, it was rediscovered in 1812 by Swiss explorer Johann Ludwig Burckhardt. Today, Petra remains one of the most extraordinary archaeological sites in the world and a testament to ancient innovation.">
+            <h1 class="wonder-title">Petra</h1>
+            <div class="wonder-history-preview">
+                A city carved into the heart of rose-red mountains, hidden for centuries in the Jordan desert.
+                <span class="click-hint">Click to expand details</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. CHRIST THE REDEEMER -->
+    <section class="wonder-section" id="christ" data-name="Christ the Redeemer">
+        <div class="overlay"></div>
+        <div id="carousel-christ" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-indicators">
+                <button type="button" data-bs-target="#carousel-christ" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                <button type="button" data-bs-target="#carousel-christ" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                <button type="button" data-bs-target="#carousel-christ" data-bs-slide-to="2" aria-label="Slide 3"></button>
+                <button type="button" data-bs-target="#carousel-christ" data-bs-slide-to="3" aria-label="Slide 4"></button>
+            </div>
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <img src="/redeemer/2024-05-17t175319z-2113098371-rc26s7ashkoa-rtrmadp-3-brazil-dailylife.jpg" class="d-block w-100" alt="Christ statue close">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>Christ the Redeemer</h5>
+                        <p>The iconic statue overlooking Rio de Janeiro.</p>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img src="/redeemer/IMG 0.jpg" class="d-block w-100" alt="Christ statue close">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>Christ the Redeemer</h5>
+                        <p>Arms outstretched in blessing.</p>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img src="/redeemer/20231122221124_45448c583eabca7ad6be347939c641312d4ce7570209ad29d3345175aea14fec.jpg" class="d-block w-100" alt="Christ the Redeemer">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>Christ the Redeemer</h5>
+                        <p>A symbol of faith and Brazilian culture.</p>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img src="/redeemer/Aerial_view_of_the_Statue_of_Christ_the_Redeemer.jpg" class="d-block w-100" alt="Christ statue close">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>Christ the Redeemer</h5>
+                        <p>One of the New Seven Wonders of the World.</p>
+                    </div>
+                </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carousel-christ" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carousel-christ" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+        <div class="wonder-content" data-full="The iconic Art Deco statue of Jesus Christ atop Mount Corcovado in Rio de Janeiro, Brazil. Standing 30 meters tall (38 with pedestal), it was completed in 1931 and has become a symbol of Christianity and Brazilian culture. The statue offers panoramic views of the city and is made of reinforced concrete and soapstone. It is one of the most recognizable landmarks in the world.">
+            <h1 class="wonder-title">Christ the Redeemer</h1>
+            <div class="wonder-history-preview">
+                An iconic Art Deco statue overlooking Rio de Janeiro, arms outstretched in blessing.
+                <span class="click-hint">Click to expand details</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. MACHU PICCHU -->
+    <section class="wonder-section" id="machu" data-name="Machu Picchu">
+        <div class="overlay"></div>
+        <div id="carousel-machu" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-indicators">
+                <button type="button" data-bs-target="#carousel-machu" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                <button type="button" data-bs-target="#carousel-machu" data-bs-slide-to="1" aria-label="Slide 2"></button>
+            </div>
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <img src="https://images.unsplash.com/photo-1587595431974-79c5e7b46d2f?w=1600" class="d-block w-100" alt="Machu Picchu">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>Machu Picchu</h5>
+                        <p>The lost city of the Incas, high in the Andes.</p>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img src="https://images.unsplash.com/photo-1526392060935-9d5df6b7b7b7?w=1600" class="d-block w-100" alt="Machu Picchu panorama">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>Machu Picchu</h5>
+                        <p>Breathtaking views and ancient terraces.</p>
+                    </div>
+                </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carousel-machu" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carousel-machu" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+        <div class="wonder-content" data-full="Fifteenth-century Inca citadel located in the Andes Mountains of Peru. Believed to have been built as an estate for Emperor Pachacuti, it is often called the 'Lost City of the Incas.' The site features sophisticated dry-stone walls, terraces, and buildings that blend with the natural landscape. Abandoned after the Spanish Conquest, it remained unknown to the outside world until Hiram Bingham brought it to international attention in 1911. Today it is a UNESCO World Heritage site and one of the most iconic archaeological sites.">
+            <h1 class="wonder-title">Machu Picchu</h1>
+            <div class="wonder-history-preview">
+                Inca citadel high in the Andes, shrouded in mist and mystery.
+                <span class="click-hint">Click to expand details</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. CHICHEN ITZA -->
+    <section class="wonder-section" id="chichen" data-name="Chichen Itza">
+        <div class="overlay"></div>
+        <div id="carousel-chichen" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-indicators">
+                <button type="button" data-bs-target="#carousel-chichen" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                <button type="button" data-bs-target="#carousel-chichen" data-bs-slide-to="1" aria-label="Slide 2"></button>
+            </div>
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <img src="https://images.unsplash.com/photo-1566305977571-5666677c6e9c?w=1600" class="d-block w-100" alt="Chichen Itza">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>Chichen Itza</h5>
+                        <p>El Castillo, the iconic step pyramid.</p>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img src="https://images.unsplash.com/photo-1605972191771-60caf86b9d7c?w=1600" class="d-block w-100" alt="Chichen Itza night">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>Chichen Itza</h5>
+                        <p>Mayan astronomical precision and history.</p>
+                    </div>
+                </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carousel-chichen" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carousel-chichen" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+        <div class="wonder-content" data-full="A large pre-Columbian archaeological site in Mexico's Yucatan Peninsula built by the Maya civilization. The most famous structure is El Castillo (Temple of Kukulcan), a step pyramid that demonstrates the Mayan astronomical knowledge: during equinoxes, shadows create the illusion of a serpent descending. The city was a major focal point of the Maya world from 600-1200 AD, blending Maya and Toltec influences. It includes numerous temples, ball courts, and the Sacred Cenote.">
+            <h1 class="wonder-title">Chichen Itza</h1>
+            <div class="wonder-history-preview">
+                Mayan step pyramid where shadows of serpents descend during equinox.
+                <span class="click-hint">Click to expand details</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. COLOSSEUM -->
+    <section class="wonder-section" id="colosseum" data-name="Colosseum">
+        <div class="overlay"></div>
+        <div id="carousel-colosseum" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-indicators">
+                <button type="button" data-bs-target="#carousel-colosseum" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                <button type="button" data-bs-target="#carousel-colosseum" data-bs-slide-to="1" aria-label="Slide 2"></button>
+            </div>
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <img src="https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=1600" class="d-block w-100" alt="Colosseum">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>Colosseum</h5>
+                        <p>The largest ancient amphitheater ever built.</p>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img src="https://images.unsplash.com/photo-1603214819602-5e7e096b2cd9?w=1600" class="d-block w-100" alt="Colosseum interior">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>Colosseum</h5>
+                        <p>Where gladiators once fought.</p>
+                    </div>
+                </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carousel-colosseum" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carousel-colosseum" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+        <div class="wonder-content" data-full="The largest ancient amphitheater ever built, located in Rome, Italy. Constructed from 72-80 AD under Emperor Vespasian and Titus, it could hold 50,000-80,000 spectators. It hosted gladiatorial contests, animal hunts, and other public spectacles. The elliptical structure used advanced Roman engineering with concrete and stone. Despite earthquakes and stone robbers, it remains a symbol of Imperial Rome and a major tourist attraction.">
+            <h1 class="wonder-title">Colosseum</h1>
+            <div class="wonder-history-preview">
+                Ancient Roman amphitheater that once roared with gladiators and spectacles.
+                <span class="click-hint">Click to expand details</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7. TAJ MAHAL -->
+    <section class="wonder-section" id="tajmahal" data-name="Taj Mahal">
+        <div class="overlay"></div>
+        <div id="carousel-tajmahal" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-indicators">
+                <button type="button" data-bs-target="#carousel-tajmahal" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                <button type="button" data-bs-target="#carousel-tajmahal" data-bs-slide-to="1" aria-label="Slide 2"></button>
+            </div>
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <img src="https://images.unsplash.com/photo-1564507592333-c60657eea523?w=1600" class="d-block w-100" alt="Taj Mahal">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>Taj Mahal</h5>
+                        <p>A monument to eternal love.</p>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img src="https://images.unsplash.com/photo-1566374026592-e5c60e5b5129?w=1600" class="d-block w-100" alt="Taj Mahal side">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>Taj Mahal</h5>
+                        <p>Symmetry and beauty in white marble.</p>
+                    </div>
+                </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carousel-tajmahal" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carousel-tajmahal" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+        <div class="wonder-content" data-full="A white marble mausoleum in Agra, India, commissioned in 1632 by Mughal Emperor Shah Jahan to house the tomb of his favorite wife, Mumtaz Mahal. It is a masterpiece of Mughal architecture combining Persian, Islamic, and Indian styles. The complex includes gardens, a mosque, and a guest house. Construction took about 20 years with thousands of artisans. It is universally admired for its symmetrical beauty and intricate inlay work. It's a UNESCO World Heritage site and one of the most famous buildings in the world.">
+            <h1 class="wonder-title">Taj Mahal</h1>
+            <div class="wonder-history-preview">
+                A breathtaking marble mausoleum, a monument to eternal love.
+                <span class="click-hint">Click to expand details</span>
+            </div>
+        </div>
+    </section>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        const $container = $('#mainScroll');
+        const $sections = $('.wonder-section');
+
+        // Setup Sidebar – one icon per section using first image
+        $('#sidebarNav').empty();
+        $sections.each(function () {
+            const id = $(this).attr('id');
+            const img = $(this).find('.carousel-item:first img').attr('src');
+            $('#sidebarNav').append(`<div class="nav-icon" data-target="#${id}" style="background-image: url('${img}')"></div>`);
+        });
+        $('.nav-icon').first().addClass('active');
+
+        // Click Icon to Scroll (smooth animation)
+        $(document).on('click', '.nav-icon', function () {
+            const target = $($(this).data('target'));
+            if (target.length) {
+                const pos = target.position().top + $container.scrollTop();
+                $container.stop().animate({ scrollTop: pos }, 1000);
+            }
+        });
+
+        // OPEN FULL CARD (detail overlay) – only for sections with wonder-content
+        $('.wonder-content').on('click', function(){
+            const title = $(this).find('.wonder-title').text();
+            const fullText = $(this).data('full');
+            const $section = $(this).closest('section');
+
+            $('#detailTitle').text(title);
+            $('#detailFullText').text(fullText);
+
+            // Build carousel dynamically from that section's images
+            const $images = $section.find('.carousel-item img');
+            const $carouselInner = $('#detailCarouselInner');
+            $carouselInner.empty();
+
+            $images.each(function(index){
+                const src = $(this).attr('src');
+                $carouselInner.append(`
+                    <div class="carousel-item ${index === 0 ? 'active' : ''}">
+                        <img src="${src}" class="d-block w-100" alt="detail view">
+                    </div>
+                `);
+            });
+
+            $('#detailOverlay').addClass('active');
+        });
+
+        // CLOSE FULL CARD
+        $('.close-detail, #detailOverlay').on('click', function (e) {
+            if (e.target !== this && !$(e.target).hasClass('close-detail')) return;
+            $('#detailOverlay').removeClass('active');
+        });
+
+        // Update Sidebar & active section on scroll
+        $container.on('scroll', function () {
+            let scrollTop = $container.scrollTop();
+            let containerHeight = $container.height();
+
+            $sections.each(function () {
+                let $this = $(this);
+                let sectionTop = $this.position().top;
+                if (sectionTop <= containerHeight / 2 && sectionTop > -containerHeight / 2) {
+                    let id = $this.attr('id');
+                    $('.nav-icon').removeClass('active');
+                    $(`.nav-icon[data-target="#${id}"]`).addClass('active');
+                    $sections.removeClass('active');
+                    $this.addClass('active');
+                }
+            });
+        });
+
+        $container.trigger('scroll');
+
+        // ========== INSTANT SEARCH (no animation) ==========
+        let searchTimeout;
+        $('#search').on('keyup', function() {
+            clearTimeout(searchTimeout);
+            const $input = $(this);
+            searchTimeout = setTimeout(() => {
+                const query = $input.val().toLowerCase().trim();
+                $input.removeClass('search-error');
+                
+                if (query === '') return;
+
+                let found = false;
+                $sections.each(function() {
+                    const name = $(this).data('name') || '';
+                    if (name.toLowerCase().includes(query)) {
+                        const target = $(this);
+                        const pos = target.position().top + $container.scrollTop();
+                        // INSTANT jump – no animation
+                        $container.scrollTop(pos);
+                        found = true;
+                        return false; // break loop
+                    }
+                });
+
+                if (!found) {
+                    $input.addClass('search-error');
+                    setTimeout(() => $input.removeClass('search-error'), 500);
+                }
+            }, 300); // 300ms debounce
+        });
+    });
+</script>
+
+</body>
+</html>
